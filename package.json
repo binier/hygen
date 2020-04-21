@@ -6,6 +6,9 @@
   "bin": {
     "hygen": "./dist/bin.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "standalone": "rm -rf standalone; yarn build:lib && yarn pkg package.json --out-path standalone && node scripts/standalone.js",
     "standalone:brew-sha": "shasum -a 256 standalone/*.macos.*.tar.gz",
