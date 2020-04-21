@@ -21,7 +21,7 @@ jobs:
       node_js: "10"
       deploy:
           provider: script
-          script: "yarn run publish"
+          script: "yarn publish"
           skip_cleanup: true
           on:
             tags: true
