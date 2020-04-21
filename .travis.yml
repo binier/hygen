@@ -19,7 +19,6 @@ jobs:
   include:
     - stage: npm
       node_js: "10"
-      if: tag =~ ^v\d.*
       deploy:
           provider: script
           script: "yarn run publish"
@@ -37,7 +36,6 @@ jobs:
         keep-history: true
     - stage: binary releases
       script: yarn standalone
-      if: tag =~ ^v\d.*
       node_js: "10"
       deploy:
         provider: releases
