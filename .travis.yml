@@ -22,9 +22,9 @@ jobs:
       deploy:
           provider: script
           script: "yarn run publish"
+          skip_cleanup: true
           on:
             tags: true
-            skip_cleanup: true
     - stage: docs
       script: yarn docs:prepare && yarn docs:build
       node_js: "10"
