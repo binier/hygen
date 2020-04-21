@@ -1,24 +1,24 @@
-import { Logger } from './types'
+import { Logger } from './types';
 
-const fs = require('fs')
-const path = require('path')
-const chalk = require('chalk')
-const pkg = require('../package.json')
+const fs = require('fs');
+const path = require('path');
+const chalk = require('chalk');
+const pkg = require('../package.json');
 
 const availableActions = (templates: string) => {
   const generators = fs
     .readdirSync(templates)
-    .filter(_ => fs.lstatSync(path.join(templates, _)).isDirectory())
+    .filter((_) => fs.lstatSync(path.join(templates, _)).isDirectory());
   return generators.reduce((acc, generator) => {
-    const actions = fs.readdirSync(path.join(templates, generator))
-    acc[generator] = actions
-    return acc
-  }, {})
-}
+    const actions = fs.readdirSync(path.join(templates, generator));
+    acc[generator] = actions;
+    return acc;
+  }, {});
+};
 
 const printHelp = (templates: string, logger: Logger) => {
-  logger.log(`Hygen v${pkg.version}`)
-  logger.log('\nAvailable actions:')
+  logger.log(`Hygen v${pkg.version}`);
+  logger.log('\nAvailable actions:');
   if (!templates) {
     logger.log(`No generators or actions found. 
 
@@ -36,13 +36,12 @@ const printHelp = (templates: string, logger: Logger) => {
 
       See http://hygen.io for more.
       
-      `)
-    return
+      `);
+    return;
   }
   Object.entries(availableActions(templates)).forEach(([k, v]) => {
-    // @ts-ignore
-    logger.log(`${chalk.bold(k)}: ${v.join(', ')}`)
-  })
-}
+    logger.log(`${chalk.bold(k)}: ${(v as []).join(', ')}`);
+  });
+};
 
-export { availableActions, printHelp }
+export { availableActions, printHelp };

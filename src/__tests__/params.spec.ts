@@ -1,44 +1,44 @@
-import path from 'path'
-import params from '../params'
+import path from 'path';
+import params from '../params';
 
-const fixture = dir => path.join(__dirname, 'fixtures/templates', dir)
+const fixture = (dir) => path.join(__dirname, 'fixtures/templates', dir);
 
 describe('params', () => {
   beforeEach(() => {
-    process.env.HYGEN_TMPLS = null
-  })
+    process.env.HYGEN_TMPLS = null;
+  });
   it('dont take template folder in template', async () => {
     const args = await params(
       { templates: fixture('template-folder-in-templates/_templates') },
-      ['dont-take-this', 'foo', 'bar', 'baz'],
-    )
+      ['dont-take-this', 'foo', 'bar', 'baz']
+    );
     expect(args).toEqual({
       action: 'foo',
       name: 'bar',
       subaction: undefined,
       actionfolder: `${fixture(
-        'template-folder-in-templates/_templates',
+        'template-folder-in-templates/_templates'
       )}/dont-take-this/foo`,
       generator: 'dont-take-this',
       templates: fixture('template-folder-in-templates/_templates'),
-    })
-  })
+    });
+  });
 
   it('env var overrides local templates but still take explicitly given templates', async () => {
-    process.env.HYGEN_TMPLS = fixture('templates-override/tmpls')
+    process.env.HYGEN_TMPLS = fixture('templates-override/tmpls');
     const args = await params(
       { templates: fixture('templates-override/_templates') },
-      ['dont-take-this', 'foo', 'bar', 'baz'],
-    )
+      ['dont-take-this', 'foo', 'bar', 'baz']
+    );
     expect(args).toEqual({
       action: 'foo',
       name: 'bar',
       subaction: undefined,
       generator: 'dont-take-this',
       actionfolder: `${fixture(
-        'templates-override/_templates',
+        'templates-override/_templates'
       )}/dont-take-this/foo`,
       templates: fixture('templates-override/_templates'),
-    })
-  })
-})
+    });
+  });
+});

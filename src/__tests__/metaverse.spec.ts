@@ -1,89 +1,89 @@
-import Logger from '../logger'
+import Logger from '../logger';
 
 jest.mock('enquirer', () => ({
   prompt: null,
-}))
+}));
 
-const SKIP_ON_WINDOWS = process.platform === 'win32' ? ['shell'] : []
+const SKIP_ON_WINDOWS = process.platform === 'win32' ? ['shell'] : [];
 
-const path = require('path')
-const dirCompare = require('dir-compare')
+const path = require('path');
+const dirCompare = require('dir-compare');
 
-const opts = { compareContent: true }
-const fs = require('fs-extra')
-const enquirer = require('enquirer')
-const { runner } = require('../index')
+const opts = { compareContent: true };
+const fs = require('fs-extra');
+const enquirer = require('enquirer');
+const { runner } = require('../index');
 
-const logger = new Logger(console.log)
+const logger = new Logger(console.log);
 const failPrompt = () => {
-  throw new Error('set up prompt in testing')
-}
+  throw new Error('set up prompt in testing');
+};
 
-const dir = m => path.join(__dirname, 'metaverse', m)
+const dir = (m) => path.join(__dirname, 'metaverse', m);
 const metaverse = (folder, cmds, promptResponse = null) =>
   it(folder, async () => {
-    const metaDir = dir(folder)
-    console.log('metaverse test in:', metaDir)
+    const metaDir = dir(folder);
+    console.log('metaverse test in:', metaDir);
     const config = {
       templates: '_templates',
       cwd: metaDir,
       exec: (action, body) => {
-        const opts = body && body.length > 0 ? { input: body } : {}
-        return require('execa').shell(action, opts)
+        const opts = body && body.length > 0 ? { input: body } : {};
+        return require('execa').shell(action, opts);
       },
       logger,
       createPrompter: () => require('enquirer'),
-    }
+    };
     // await fs.remove(path.join(metaDir, 'given'))
-    console.log('before', fs.readdirSync(metaDir))
+    console.log('before', fs.readdirSync(metaDir));
     for (let cmd of cmds) {
-      console.log('testing', cmd)
+      console.log('testing', cmd);
       if (
         process.platform === 'win32' &&
-        SKIP_ON_WINDOWS.find(c => cmd[0] === c)
+        SKIP_ON_WINDOWS.find((c) => cmd[0] === c)
       ) {
-        console.log(`skipping ${cmd} (windows!)`)
-        await fs.remove(path.join(metaDir, 'expected', cmd[0]))
-        continue
+        console.log(`skipping ${cmd} (windows!)`);
+        await fs.remove(path.join(metaDir, 'expected', cmd[0]));
+        continue;
       }
 
-      enquirer.prompt = failPrompt
+      enquirer.prompt = failPrompt;
       if (promptResponse) {
-        const last = cmd[cmd.length - 1]
+        const last = cmd[cmd.length - 1];
         if (typeof last === 'object') {
-          cmd = cmd.slice(cmd.length - 1)
+          cmd = cmd.slice(cmd.length - 1);
           enquirer.prompt = () =>
-            Promise.resolve({ ...promptResponse, ...last })
+            Promise.resolve({ ...promptResponse, ...last });
         } else {
-          enquirer.prompt = () => Promise.resolve(promptResponse)
+          enquirer.prompt = () => Promise.resolve(promptResponse);
         }
       }
-      const res = await runner(cmd, config)
-      res.actions.forEach(a => {
-        a.timing = -1
-        a.subject = a.subject.replace(/.*hygen\/src/, '')
-      })
-      expect(res).toMatchSnapshot(cmd.join(' '))
+      const res = await runner(cmd, config);
+      res.actions.forEach((a) => {
+        a.timing = -1;
+        a.subject = a.subject.replace(/.*hygen\/src/, '');
+      });
+      expect(res).toMatchSnapshot(cmd.join(' '));
     }
-    const givenDir = path.join(metaDir, 'given')
-    const expectedDir = path.join(metaDir, 'expected')
+    const givenDir = path.join(metaDir, 'given');
+    const expectedDir = path.join(metaDir, 'expected');
     console.log('after', {
       [givenDir]: fs.readdirSync(givenDir),
       [expectedDir]: fs.readdirSync(expectedDir),
-    })
-    const res = dirCompare.compareSync(givenDir, expectedDir, opts)
-    res.diffSet = res.diffSet.filter(d => d.state !== 'equal')
+    });
+    const res = dirCompare.compareSync(givenDir, expectedDir, opts);
+    res.diffSet = res.diffSet.filter((d) => d.state !== 'equal');
     if (!res.same) {
-      console.log(res)
+      console.log(res);
     }
-    expect(res.same).toEqual(true)
-  })
+    expect(res.same).toEqual(true);
+  });
 
 describe('metaverse', () => {
   beforeEach(() => {
-    enquirer.prompt = failPrompt
-  })
-  metaverse('hygen-extension', [['hygen-js', 'new']], { overwrite: true })
+    enquirer.prompt = failPrompt;
+  });
+  metaverse('hygen-extension', [['hygen-js', 'new']], { overwrite: true });
   metaverse(
     'hygen-templates',
     [
@@ -145,6 +145,6 @@ describe('metaverse', () => {
       // recursive-prompt
       email: 'some-email@foobar.com',
       emailConfirmation: 'confirmed-some-email@foobar.com',
-    },
-  )
-})
+    }
+  );
+});
