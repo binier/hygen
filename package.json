@@ -13,7 +13,7 @@
     "build:lib": "tsc",
     "build": "yarn build:lib && yarn build:changelog",
     "release": "yarn build && git commit -am 'build'; yarn version && git push --tags && git push origin master",
-    "test": "yarn test:code && yarn test:require",
+    "test": "yarn test:code",
     "test:win32": "node node_modules/jest/bin/jest.js --runInBand metaverse",
     "test:code": "node node_modules/.bin/jest",
     "test:metaverse": "node node_modules/.bin/jest metaverse",
