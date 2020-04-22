@@ -35,7 +35,12 @@ const capitalizedLocals = (locals: any, localsToCapitalize = ['name']) =>
   Object.entries(locals).reduce(doCapitalization(localsToCapitalize), {});
 
 const context = (locals: any, config: RunnerConfig) => {
-  const localsWithDefaults = Object.assign({}, localsDefaults, locals);
+  const localsWithDefaults = Object.assign(
+    {},
+    localsDefaults,
+    config && config.localsDefaults,
+    locals
+  );
   const configHelpers =
     (config &&
       (typeof config.helpers === 'function'
